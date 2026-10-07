@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PomoBox · 番茄专注钟：番茄工作法计时器，任务清单、每日统计、完成提示音与通知，纯前端本地运行。">
+  <title>PomoBox · 番茄专注钟</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23e5533d'/%3E%3Ccircle cx='32' cy='36' r='16' fill='%23fff'/%3E%3Cpath d='M32 20v-6m0 0c4-4 9-4 9-4s0 5-4 7' stroke='%23fff' stroke-width='4' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <header class="site-header">
+    <div class="header-inner wrap">
+      <a class="brand" href="./">🍅 PomoBox <span class="brand-sub">番茄专注钟</span></a>
+      <button id="themeToggle" class="icon-btn" title="切换深浅色" aria-label="切换深浅色模式">🌙</button>
+    </div>
+  </header>
+
+  <main id="main" class="wrap layout">
+    <!-- ============ 计时器 ============ -->
+    <section class="card timer-card" aria-label="计时器">
+      <div class="phase-tabs" role="tablist" aria-label="阶段切换">
+        <button class="phase-btn" data-phase="focus" aria-pressed="true">专注</button>
+        <button class="phase-btn" data-phase="short" aria-pressed="false">短休息</button>
+        <button class="phase-btn" data-phase="long" aria-pressed="false">长休息</button>
+      </div>
+
+      <div class="ring-wrap">
+        <svg class="ring" viewBox="0 0 260 260" aria-hidden="true">
+          <circle class="ring-track" cx="130" cy="130" r="116"/>
+          <circle class="ring-bar" id="ringBar" cx="130" cy="130" r="116"/>
+        </svg>
+        <div class="ring-center">
+          <p class="time" id="timeText">25:00</p>
+          <p class="phase-label" id="phaseLabel">专注中</p>
+        </div>
+      </div>
+
+      <div class="btn-row center">
+        <button class="btn big" id="startBtn">开始</button>
+        <button class="btn ghost" id="resetBtn" title="重置当前阶段">重置</button>
+        <button class="btn ghost" id="skipBtn" title="跳过当前阶段">跳过 ⏭</button>
+      </div>
+
+      <p class="cycle-hint" id="cycleHint">已完成 0 / 4 个番茄，之后进入长休息</p>
+      <p class="kbd-hint"><kbd>空格</kbd> 开始 / 暂停 · <kbd>R</kbd> 重置</p>
+    </section>
+
+    <!-- ============ 右列 ============ -->
+    <div class="side">
+      <section class="card" aria-labelledby="taskTitle">
+        <h2 id="taskTitle">任务清单</h2>
+        <form id="taskForm" class="task-form">
+          <input type="text" id="taskInput" maxlength="60" placeholder="添加一个任务，回车确认" aria-label="新任务">
+        </form>
+        <ul class="task-list" id="taskList"></ul>
+        <p class="hint" id="taskEmpty">还没有任务。专注时选中一个任务，完成的番茄会记在它名下。</p>
+        <div class="btn-row">
+          <button class="btn ghost small" id="taskClearDone">清除已完成</button>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="statTitle">
+        <h2 id="statTitle">今日专注</h2>
+        <div class="stat-row">
+          <div class="stat-box"><b id="statToday">0</b><span>番茄 🍅</span></div>
+          <div class="stat-box"><b id="statMinutes">0</b><span>专注分钟</span></div>
+          <div class="stat-box"><b id="statTotal">0</b><span>累计番茄</span></div>
+        </div>
+        <div class="week" id="weekChart" aria-label="最近 7 天统计"></div>
+      </section>
+
+      <details class="card" aria-labelledby="setTitle">
+        <summary id="setTitle">⚙️ 设置</summary>
+        <div class="grid-set">
+          <label class="field"><span>专注（分钟）</span><input type="number" id="setFocus" min="1" max="120" value="25"></label>
+          <label class="field"><span>短休息（分钟）</span><input type="number" id="setShort" min="1" max="30" value="5"></label>
+          <label class="field"><span>长休息（分钟）</span><input type="number" id="setLong" min="1" max="60" value="15"></label>
+          <label class="field"><span>几轮后长休息</span><input type="number" id="setLongEvery" min="2" max="8" value="4"></label>
+        </div>
+        <label class="check"><input type="checkbox" id="setAuto"> 阶段结束后自动开始下一阶段</label>
+        <label class="check"><input type="checkbox" id="setSound" checked> 完成时播放提示音</label>
+        <label class="check"><input type="checkbox" id="setNotify"> 完成时发送系统通知</label>
+      </details>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <p>纯前端运行 · 数据保存在本机浏览器 · 换设备不同步</p>
+      <p>
+        <a href="https://github.com/huqinyuan923-hue/pomobox" target="_blank" rel="noopener noreferrer">GitHub 开源</a>
+        · <a href="https://toolbox.adcakeyuan.top" target="_blank" rel="noopener noreferrer">Toolbox 工具箱</a>
+        · <a href="https://adcakeyuan.top" target="_blank" rel="noopener noreferrer">我的博客</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
