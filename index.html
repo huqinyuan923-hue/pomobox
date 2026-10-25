@@ -7,8 +7,29 @@
   <title>PomoBox · 番茄专注钟</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23e5533d'/%3E%3Ccircle cx='32' cy='36' r='16' fill='%23fff'/%3E%3Cpath d='M32 20v-6m0 0c4-4 9-4 9-4s0 5-4 7' stroke='%23fff' stroke-width='4' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* 进站动画：番茄钟充能（每会话一次） */
+    #boot{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:#1a0e0a;font-family:system-ui,sans-serif;animation:pbOut .5s ease 2s forwards}
+    #boot .p-logo{color:#f87171;font-size:clamp(24px,5vw,42px);font-weight:800;animation:pbIn .5s ease both}
+    #boot .p-ring{width:110px;height:110px;border-radius:50%;display:grid;place-items:center;font-size:40px;
+      background:conic-gradient(#ef4444 0 360deg);mask:radial-gradient(circle,transparent 58%,#000 60%);-webkit-mask:radial-gradient(circle,transparent 58%,#000 60%);
+      animation:pbFill 1.6s cubic-bezier(.3,0,.4,1) .4s both}
+    @property --pba{syntax:'<angle>';initial-value:0deg;inherits:false}
+    @keyframes pbFill{from{background:conic-gradient(#ef4444 0deg)}to{background:conic-gradient(#ef4444 360deg)}}
+    #boot .p-sub{color:#94a3b8;font-size:13px;letter-spacing:.15em;opacity:0;animation:pbIn .35s ease 1.5s both}
+    @keyframes pbIn{from{opacity:0;transform:translateY(10px)}}
+    @keyframes pbOut{to{opacity:0;visibility:hidden;transform:scale(1.03)}}
+    @media (prefers-reduced-motion:reduce){#boot{display:none}}
+  </style>
 </head>
 <body>
+  <!-- 进站引导（每会话一次） -->
+  <div id="boot" aria-hidden="true">
+    <div class="p-logo">POMOBOX</div>
+    <div class="p-ring">🍅</div>
+    <div class="p-sub">FOCUS · 25:00</div>
+  </div>
+  <script>try{if(sessionStorage.getItem('boot-seen')){var b=document.getElementById('boot');b&&(b.style.display='none')}else{sessionStorage.setItem('boot-seen','1')}}catch(e){}</script>
   <a class="skip-link" href="#main">跳到主要内容</a>
 
   <header class="site-header">
